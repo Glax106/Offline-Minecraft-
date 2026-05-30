@@ -5,6 +5,7 @@ import subprocess
 import os
 import sys
 import threading
+import json
 
 # উইন্ডো বেসিক সেটআপ
 ctk.set_appearance_mode("System")
@@ -14,6 +15,28 @@ root = ctk.CTk()
 root.title("Atsenor Client")
 root.geometry("800x500")
 root.resizable(False, False)
+
+# ডাটা সেভ করার ফাইল পাথ (লঞ্চারের ফোল্ডারেই একটি ছোট JSON ফাইল তৈরি হবে)
+CONFIG_FILE = "launcher_config.json"
+
+# আগের সেভ করা ইউজারনেম লোড করার ফাংশন
+def load_saved_username():
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                data = json.load(f)
+                return data.get("username", "")
+        except:
+            return ""
+    return ""
+
+# নতুন ইউজারনেম সেভ করার ফাংশন
+def save_username(username):
+    try:
+        with open(CONFIG_FILE, "w") as f:
+            json.dump({"username": username}, f)
+    except:
+        pass
 
 # রিসোর্স পাথ খোঁজার ফাংশন (EXE বানানোর পর ছবি ও লোগো চেনার জন্য)
 def get_resource_path(relative_path):
@@ -60,6 +83,11 @@ ctk.CTkLabel(main_content, text="Enter Offline Username:", font=ctk.CTkFont(size
 username_entry = ctk.CTkEntry(main_content, placeholder_text="e.g. AtsenorPlayer", width=200)
 username_entry.pack(pady=5)
 
+# আগে কোনো নাম সেভ করা থাকলে তা ইনপুট বক্সে অটো-ফিল করা
+saved_name = load_saved_username()
+if saved_name:
+    username_entry.insert(0, saved_name)
+
 # ভার্সন সিলেকশন ড্রপডাউন (মোজাং সার্ভার থেকে সব রিলিজড ভার্সন লোড হবে)
 ctk.CTkLabel(main_content, text="Select Version:", font=ctk.CTkFont(size=14)).pack(pady=5)
 
@@ -74,6 +102,10 @@ version_option.pack(pady=10)
 # ব্যাকগ্রাউন্ড থ্রেডে গেম রান করার লজিক (যাতে UI ফ্রিজ বা Not Responding না হয়)
 def launch_game_thread():
     typed_username = username_entry.get().strip() or "AtsenorPlayer"
+    
+    # প্লেয়ার কারেন্টলি যে নামটা টাইপ করেছে, সেটা ফাইলে সেভ/আপডেট করা
+    save_username(typed_username)
+    
     version = version_option.get() 
     minecraft_directory = minecraft_launcher_lib.utils.get_minecraft_directory()
     
@@ -100,7 +132,7 @@ def launch_game_thread():
         # ৪. কাস্টম লঞ্চার উইন্ডোটি পুরোপুরি বন্ধ করে দেওয়া
         root.destroy()
         
-        # ۵. শুধুমাত্র ভ্যানিলা মাইনক্রাফট রান করা
+        # ৫. শুধুমাত্র ভ্যানিলা মাইনক্রাফট রান করা
         subprocess.run(command)
         
     except Exception as e:
@@ -119,3 +151,4 @@ start_btn = ctk.CTkButton(main_content, text="START", width=200, height=50, font
 start_btn.pack(side="bottom", pady=40)
 
 root.mainloop()
+                    
