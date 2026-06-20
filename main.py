@@ -154,7 +154,11 @@ def open_cape_uploader():
                                 # Send to Firebase Real-time Database (Hidden from player)
                 firebase_url = "https://atsenor-database-default-rtdb.firebaseio.com/capes"
                 
-                firebase_data = {username.strip(): live_cape_url}
+                # পাইথন কোডের ডাটাবেজ এন্ট্রি তখন দেখতে এমন হবে:
+firebase_data = {
+    "cape_url": live_cape_url,
+    "pin": pin_entry.get().strip(),  # প্লেয়ারের দেওয়া পিন
+}
 
                 try:
                     requests.patch(f"{firebase_url}.json", json=firebase_data)
