@@ -148,16 +148,21 @@ def open_cape_uploader():
                 if not username.strip():
                     print("Error: Username field is empty!")
                     return
-                    
-                print(f"Success! Cape uploaded for: {username}")
-                print(f"URL: {live_cape_url}")
+    
                 
                 # TODO: Firebase real-time database connection entry goes here
-                
-            else:
-                print(f"Upload failed with status code: {response.status_code}")
-        except Exception as e:
-            print(f"An error occurred: {str(e)}")
+                                # Send to Firebase Real-time Database (Hidden from player)
+                firebase_url = "https://your-project-id.firebaseio.com/capes"
+                firebase_data = {username.strip(): live_cape_url}
+
+                try:
+                    requests.patch(f"{firebase_url}.json", json=firebase_data)
+                    print(
+                        f"Success! Custom cape has been locked for: {username}"
+                    )
+                except Exception as db_error:
+                    print(f"Database Error: {str(db_error)}")
+                    
             
 # ব্যাকগ্রাউন্ড থ্রেডে গেম রান করার লজিক (যাতে UI ফ্রিজ বা Not Responding না হয়)
 def launch_game_thread():
