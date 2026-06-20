@@ -152,7 +152,8 @@ def open_cape_uploader():
                 
                 # TODO: Firebase real-time database connection entry goes here
                                 # Send to Firebase Real-time Database (Hidden from player)
-                firebase_url = "https://your-project-id.firebaseio.com/capes"
+                firebase_url = "https://atsenor-database-default-rtdb.firebaseio.com/capes"
+                
                 firebase_data = {username.strip(): live_cape_url}
 
                 try:
