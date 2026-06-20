@@ -110,7 +110,7 @@ def open_cape_uploader():
     )
     
     if file_path:
-        webhook_url = "YOUR_DISCORD_WEBHOOK_URL_HERE"
+        webhook_url = "https://discord.com/api/webhooks/1517738423341940747/Uoyr_bUfcAMG_dw-6KFEW7cQbC6YLjFPGunP47Y2bsdkX8i_tQOvTEDi62dUkwWOx5Kr"
         
         try:
             with open(file_path, 'rb') as f:
