@@ -6,6 +6,9 @@ import os
 import sys
 import threading
 import json
+import secrets
+import requests
+from tkinter import filedialog
 
 # উইন্ডো বেসিক সেটআপ
 ctk.set_appearance_mode("System")
@@ -99,6 +102,42 @@ except:
 version_option = ctk.CTkOptionMenu(main_content, values=all_versions)
 version_option.pack(pady=10)
 
+# Cape Functions 
+def open_cape_uploader():
+    file_path = filedialog.askopenfilename(
+        title="Select your Atsenor Cape (.png)",
+        filetypes=[("PNG Images", "*.png")]
+    )
+    
+    if file_path:
+        webhook_url = "YOUR_DISCORD_WEBHOOK_URL_HERE"
+        
+        try:
+            with open(file_path, 'rb') as f:
+                files = {'file': ('cape.png', f, 'image/png')}
+                response = requests.post(webhook_url, files=files)
+                
+            if response.status_code == 200:
+                data = response.json()
+                live_cape_url = data['attachments'][0]['url']
+                
+                # Dynamic check for username entry
+                username = username_entry.get()
+                
+                if not username.strip():
+                    print("Error: Username field is empty!")
+                    return
+                    
+                print(f"Success! Cape uploaded for: {username}")
+                print(f"URL: {live_cape_url}")
+                
+                # TODO: Firebase real-time database connection entry goes here
+                
+            else:
+                print(f"Upload failed with status code: {response.status_code}")
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            
 # ব্যাকগ্রাউন্ড থ্রেডে গেম রান করার লজিক (যাতে UI ফ্রিজ বা Not Responding না হয়)
 def launch_game_thread():
     typed_username = username_entry.get().strip() or "AtsenorPlayer"
@@ -149,6 +188,18 @@ def start_game():
 # স্টার্ট বাটন
 start_btn = ctk.CTkButton(main_content, text="START", width=200, height=50, font=ctk.CTkFont(size=18, weight="bold"), command=start_game)
 start_btn.pack(side="bottom", pady=40)
+
+# Cape Button
+cape_button = ctk.CTkButton(
+    master=root,
+    text="Choose Custom Cape",
+    command=open_cape_uploader,
+    width=160,
+    height=32,
+    fg_color="#1f538d",
+    hover_color="#14375e"
+)
+cape_button.place(x=20, y=20)
 
 root.mainloop()
                     
