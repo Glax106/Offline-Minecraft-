@@ -104,12 +104,33 @@ version_option.pack(pady=10)
 
 # Cape Functions 
 def open_cape_uploader():
+
     file_path = filedialog.askopenfilename(
         title="Select your Atsenor Cape (.png)",
         filetypes=[("PNG Images", "*.png")]
     )
-    
+
+    # ২. ইউজার যদি ফাইল সিলেক্ট করে, তবেই চেক এবং আপলোড শুরু হবে
     if file_path:
+
+        # --- নতুন সিকিউরিটি ফিল্টার (এখানে বসবে) ---
+        try:
+            with Image.open(file_path) as img:  # selected_file বদলে file_path হবে
+                # Check 1: Must be PNG
+                if img.format != "PNG":
+                    print("Error: Only .png images are supported!")
+                    return
+
+                # Check 2: Must be Square (1:1)
+                if img.size[0] != img.size[1]:
+                    print(
+                        "Error: Invalid cape template! Must be a square PNG."
+                    )
+                    return
+        except Exception:
+            print("Error: Not a valid image file.")
+            return
+        # ------------------------------------------
         webhook_url = "https://discord.com/api/webhooks/1517738423341940747/Uoyr_bUfcAMG_dw-6KFEW7cQbC6YLjFPGunP47Y2bsdkX8i_tQOvTEDi62dUkwWOx5Kr"
         
         try:
